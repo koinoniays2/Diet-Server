@@ -1,6 +1,20 @@
 import User from "../model/user";
 import bcrypt from "bcryptjs";
 
+// 로그인 여부
+export const loginStatus = async (req, res) => {
+    try{
+        if(req.session.user){
+            res.status(200).json({ result: true, user: req.session.user });
+        }else {
+            res.status(400).json({ result: false, user: null });
+        }
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ result: false, message: "죄송합니다. 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요." });
+    };
+};
+
 export const checkId = async (req, res) => {
     // console.log(req.body);
     const { id } = req.body;
@@ -62,7 +76,19 @@ export const login = async (req, res) => {
             return res.status(401).send({ result: false, message: "아이디 또는 비밀번호를 확인해 주세요." });
         };
         // 로그인 성공
-        return res.status(200).send({ result: true, data: { id: user.id, name: user.name } });
+        if (isMatch) {
+            // 세션에 사용자 정보 저장
+            req.session.save(() => {
+                req.session.user = { // 세션 객체 내에서 데이터를 식별하기 위한 이름 : user
+                    name: user.name,
+                    email: user.email,
+                    id: user._id
+                };
+                const data = req.session; // 세션 데이터 저장
+                // console.log(data);
+                res.status(200).send({ result: true, data: data });
+            });
+        };
     }catch(error){
         console.log(error);
         return res.status(500).json({ result: false, message: "죄송합니다. 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요." });
