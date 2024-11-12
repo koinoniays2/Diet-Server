@@ -94,3 +94,15 @@ export const login = async (req, res) => {
         return res.status(500).json({ result: false, message: "죄송합니다. 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요." });
     };
 };
+
+// 로그아웃
+export const logout = async (req, res) => {
+    try{
+        req.session.destroy(() => { // 세션 삭제
+            res.status(200).json({result: true, message: "로그아웃 성공"});
+        });
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ result: false, message: "죄송합니다. 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요." });
+    }
+}

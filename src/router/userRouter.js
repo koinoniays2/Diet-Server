@@ -1,5 +1,5 @@
 import express from "express";
-import { checkId, createUser, login, loginStatus } from "../controllers/userController";
+import { checkId, createUser, login, loginStatus, logout } from "../controllers/userController";
 
 const userRouter = express.Router();
 
@@ -7,7 +7,8 @@ userRouter.post("/check-id", checkId);
 userRouter.post("/create", createUser);
 userRouter.post("/login", login);
 
-// 로그인 여부
-userRouter.get("/login-status", loginStatus);
+userRouter.get("/login-status", loginStatus); // 로그인 여부
+userRouter.get("/logout", logout); // 로그아웃
+
 
 export default userRouter;
