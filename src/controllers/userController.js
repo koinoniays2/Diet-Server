@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 // 로그인 여부
 export const loginStatus = async (req, res) => {
     try{
-        if(req.session.user){ // 클라이언트가 보낸 세션 ID 쿠키를 통해 세션을 식별하고, 매핑 된 req.session.user에서 사용자 정보를 가져온다.
+        if(req.session.user){ // 클라이언트가 보낸 세션 ID 쿠키를 통해 세션을 식별하고, 세션에 매핑 된 사용자 정보를 req.session.user에서 가져온다.
             res.status(200).json({ result: true, user: req.session.user });
         }else {
             res.status(400).json({ result: false, user: null });
@@ -104,5 +104,5 @@ export const logout = async (req, res) => {
     }catch(error){
         console.log(error);
         return res.status(500).json({ result: false, message: "죄송합니다. 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요." });
-    }
-}
+    };
+};
