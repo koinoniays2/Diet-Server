@@ -10,7 +10,8 @@ import memoRouter from "./router/memoRouter.js";
 import folderRouter from "./router/folderRouter.js";
 
 const corsOption = {
-    origin: "*"
+    origin: ["http://localhost:3000"], // credentials: "include" 옵션을 사용할 때는 *가 아닌 정확한 도메인으로 설정
+    credentials: true // 세션 쿠키가 포함되도록 설정
 };
 
 const app = express();

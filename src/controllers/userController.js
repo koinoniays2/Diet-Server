@@ -7,7 +7,7 @@ export const loginStatus = async (req, res) => {
         if(req.session.user){ // 클라이언트가 보낸 세션 ID 쿠키를 통해 세션을 식별하고, 세션에 매핑 된 사용자 정보를 req.session.user에서 가져온다.
             res.status(200).json({ result: true, user: req.session.user });
         }else {
-            res.status(400).json({ result: false, user: null });
+            res.status(200).json({ result: false, user: null });
         }
     }catch(error){
         console.log(error);
