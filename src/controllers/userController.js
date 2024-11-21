@@ -32,14 +32,17 @@ export const checkId = async (req, res) => {
 
 export const createUser = async (req, res) => {
     // console.log(req.body);
-    const {id, password, name, phone, email} = req.body;
+    const {id, password, name, phone1, phone2, phone3, email1, email2} = req.body;
     // 필수 항목 검증
-    if (!id || !password || !name || !phone || !email) { 
+    if (!id || !password || !name || !phone1 || !phone2 || !phone3 || !email1 || !email2) { 
         return res.status(400).json({ result: false, message: "빈 칸을 확인해 주세요." });
     }
     try{
         // 비밀번호 해시
         const hashedPassword = await bcrypt.hash(password, 10);
+        // 휴대폰 번호 & 이메일
+        const phone = `${phone1}-${phone2}-${phone3}`;
+        const email = `${email1}@${email2}`
 
         const data = await User.create({
             id,
@@ -58,7 +61,6 @@ export const createUser = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    // console.log(req.body);
     const { id, password } = req.body;
     if(!id || !password) {
         return res.status(400).json({ result: false, message: "아이디와 비밀번호를 입력해주세요." });
@@ -85,7 +87,6 @@ export const login = async (req, res) => {
                     id: user._id
                 };
                 const data = req.session; // 세션 데이터 저장
-                // console.log(data);
                 res.status(200).send({ result: true, data: data });
             });
         };

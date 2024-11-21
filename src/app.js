@@ -20,7 +20,7 @@ app.use(morgan("dev"));
 app.use(cors(corsOption));
 // 세션 생성
 app.use(session({ // 세션설정
-    name: "Session ID", // 세션 쿠키 이름
+    name: "SessionID", // 세션 쿠키 이름
     secret: "secret", // 세션 데이터를 암호화하고 서명하기 위한 비밀 키
     resave: false, // true면 세션이 변경되지 않아도 항상 저장
     saveUninitialized: false, // 초기화되지 않은 세션을 저장소에 저장하지 않도록 설정(로그인한 사용자에 대해서만 세션이 생성)
