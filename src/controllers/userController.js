@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 // 로그인 여부
 export const loginStatus = async (req, res) => {
+    console.log("Session:", req.session); // 세션 확인
     try{
         if(req.session.user){ // 클라이언트가 보낸 세션 ID 쿠키를 통해 세션을 식별하고, 세션에 매핑 된 사용자 정보를 req.session.user에서 가져온다.
             res.status(200).json({ result: true, user: req.session.user });
