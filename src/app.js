@@ -11,7 +11,7 @@ import folderRouter from "./router/folderRouter.js";
 
 const corsOption = {
     origin: ["http://localhost:3000", "https://diet-bay.vercel.app"], // credentials: "include" 옵션을 사용할 때는 *가 아닌 정확한 도메인으로 설정
-    credentials: true // 세션 쿠키가 포함되도록 설정
+    credentials: true // 쿠키 허용
 };
 const app = express();
 app.use(express.json());
@@ -19,7 +19,7 @@ app.use(morgan("dev"));
 app.use(cors(corsOption));
 app.set("trust proxy", 1);/* 프록시 설정 (Vercel 등 플랫폼에서 필수)
 클라이언트가 HTTPS로 요청을 보내도 프록시(Vercel)는 내부적으로 Express에 HTTP로 요청을 보낸다.
-=> = secure: true로 설정된 쿠키가 작동하지 않음.
+=> secure: true로 설정된 쿠키가 작동하지 않음.
 하지만, app.set("trust proxy", 1);을 하게되면 원래 요청의 프로토콜(HTTPS)을 
 x-forwarded-proto: https 헤더에 담아 함께 전달. 
 Express는 x-forwarded-proto, x-forwarded-* 헤더를 신뢰하고, 요청의 원래 프로토콜이 HTTPS였음을 인식 
@@ -35,11 +35,11 @@ app.use((req, res, next) => {
 });
 */
 
-// 세션 생성
-app.use(session({ // 세션설정
+// 세션 설정 정의
+app.use(session({
     name: "SessionID", // 세션 쿠키 이름
     secret: "secret", // 세션 데이터를 암호화하고 서명하기 위한 비밀 키
-    resave: false, // true면 세션이 변경되지 않아도 항상 저장
+    resave: false, // true면 세션 데이터가 변경되지 않아도 클라이언트의 요청이 있을 때마다 저장소에 세션 데이터를 덮어씀
     saveUninitialized: false, // 초기화되지 않은 세션을 저장소에 저장하지 않도록 설정(로그인한 사용자에 대해서만 세션이 생성)
     cookie: { // 세션 쿠키의 속성을 설정(세션 쿠키는 세션 ID를 클라이언트에 저장해 서버가 세션을 인식하게 해주는 매개체 역할)
         maxAge: 1000 * 60 * 60 * 24, // 쿠키 만료 시간
@@ -48,9 +48,10 @@ app.use(session({ // 세션설정
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // sameSite: "none" => 크로스사이트 요청에서 허용(secure: true가 필요)
         // NODE_ENV는 자동으로 설정됨
     },
-    store: MongoStore.create({ // 서버가 꺼지면 메모리 위에 떠있는 세션이 사라지는것을 방지하기위해 db에 저장
-        mongoUrl: process.env.DB_URL + "/diet", // MongoDB에 세션을 저장
-    })
+    store: MongoStore.create({
+        mongoUrl: process.env.DB_URL + "/diet",
+    }) /* 별도 저장소(store)를 설정하지 않으면, 세션 데이터는 메모리(RAM) 저장소가 기본값(서버가 실행 중일때만 유지)
+    서버가 꺼지거나 여러 서버를 사용할 때도 세션 데이터를 잃지 않고 공유하기 위해 DB에 저장 */
 }));
 
 // 라우터
