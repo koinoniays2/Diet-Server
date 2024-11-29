@@ -1,9 +1,8 @@
 import express from "express";
-import { checkId, createUser, login, loginStatus, logout } from "../controllers/userController";
+import { createUser, login, loginStatus, logout } from "../controllers/userController";
 
 const userRouter = express.Router();
 
-userRouter.post("/check-id", checkId);
 userRouter.post("/create", createUser);
 userRouter.post("/login", login);
 
