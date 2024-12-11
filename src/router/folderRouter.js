@@ -4,8 +4,8 @@ import { createFolder, deleteFolder, getFolder, UpdateFolder } from "../controll
 const folderRouter = express.Router();
 
 folderRouter.get("/list", getFolder);
-folderRouter.get("/create", createFolder);
-folderRouter.get("/delete", deleteFolder);
-folderRouter.get("/update", UpdateFolder);
+folderRouter.post("/create", createFolder);
+folderRouter.post("/delete", deleteFolder);
+folderRouter.post("/update", UpdateFolder);
 
 export default folderRouter;

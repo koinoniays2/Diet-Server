@@ -8,6 +8,7 @@ import MongoStore from "connect-mongo"; // npm i connect-mongo
 import userRouter from "./router/userRouter.js";
 import memoRouter from "./router/memoRouter.js";
 import folderRouter from "./router/folderRouter.js";
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 const corsOption = {
     origin: ["http://localhost:3000", "https://diet-bay.vercel.app"], // credentials: "include" 옵션을 사용할 때는 *가 아닌 정확한 도메인으로 설정
@@ -58,7 +59,7 @@ app.use(session({
 app.get("/", (req, res) => { res.send("root"); });
 app.use("/user", userRouter);
 app.use("/memo", memoRouter);
-app.use("/folder", folderRouter);
+app.use("/folder", authMiddleware, folderRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

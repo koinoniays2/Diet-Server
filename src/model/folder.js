@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 // 스키마 정의
 const folderSchema = new mongoose.Schema({
-    writer: String,
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     folderName: String,
     createdAt: Date
 });
