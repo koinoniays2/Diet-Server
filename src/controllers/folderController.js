@@ -1,7 +1,7 @@
 
 import Folder from "../model/folder";
 export const getFolder = async (req, res) => {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     if (!userId) {
         return res.status(401).send({ result: false, message: "로그인이 필요합니다." });
