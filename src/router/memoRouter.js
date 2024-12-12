@@ -4,7 +4,7 @@ import { deleteMemo, getMemo, updateMemo, createMemo } from "../controllers/memo
 const memoRouter = express.Router();
 
 memoRouter.get("/list", getMemo);
-memoRouter./*post*/get("/write", createMemo);
+memoRouter.post("/create", createMemo);
 memoRouter./*post*/get("/delete", deleteMemo);
 memoRouter./*put*/get("/update", updateMemo);
 

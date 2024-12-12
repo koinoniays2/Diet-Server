@@ -9,6 +9,9 @@ export const getFolder = async (req, res) => {
 
     try {
         const folders = await Folder.find({ userId }).sort({ createdAt: -1 });
+
+        if(!folders) return res.status(401).send({ result: false, data: "폴더를 생성해 주세요." });
+
         return res.status(200).send({ result: true, data: folders });
     } catch (error) {
         console.error(error);

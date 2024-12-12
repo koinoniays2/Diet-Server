@@ -58,7 +58,7 @@ app.use(session({
 // 라우터
 app.get("/", (req, res) => { res.send("root"); });
 app.use("/user", userRouter);
-app.use("/memo", memoRouter);
+app.use("/memo", authMiddleware, memoRouter);
 app.use("/folder", authMiddleware, folderRouter);
 
 const PORT = process.env.PORT;
