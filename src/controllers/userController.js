@@ -50,7 +50,7 @@ export const createUser = async (req, res) => {
             name,
             phone,
             email,
-            createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000)
+            createdAt: new Date()
         });
 
         return res.status(201).json({ result: true, message: "회원가입이 완료되었습니다." });

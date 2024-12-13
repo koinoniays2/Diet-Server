@@ -3,6 +3,7 @@
 import Folder from "../model/folder";
 import Memo from "../model/memo";
 
+// 메모 불러오기
 export const getMemo = async (req, res) => {
     const folderId = req.query.folderId; // 클라이언트에서 보낸 폴더 ID를 쿼리 파라미터로 받음
     const userId = req.user?.id; // 로그인된 사용자 ID 가져오기
@@ -25,15 +26,33 @@ export const getMemo = async (req, res) => {
         return res.status(500).json({ result: false, message: "서버 에러가 발생했습니다." });
     }
 };
+
+// 폴더 안 메모 여부 업데이트 함수
+async function updateExistMemo(folderId, memoContent) {
+    const folder = await Folder.findById(folderId);
+    if (!folder) {
+        throw new Error("폴더를 찾을 수 없습니다.");
+    }
+
+    // 메모 내용이 비어있으면 0, 그렇지 않으면 1
+    folder.existMemo = memoContent.trim() === "" ? 0 : 1;
+    await folder.save();
+}
+// 폴더명 업데이트 함수
+async function updateFolderName(folderId, folderName) {
+    const folder = await Folder.findById(folderId);
+    if (folder && folder.folderName !== folderName) {
+        folder.folderName = folderName;
+        await folder.save();
+    }
+}
+
+// 메모 생성 및 수정
 export const createMemo = async (req, res) => {
     const { folderId, folderName, memo } = req.body;
     const userId = req.user?.id;
-    console.log(folderId);
-
     // 로그인 확인
-    if (!userId) {
-        return res.status(401).send({ result: false, message: "로그인이 필요합니다." });
-    }
+    if (!userId) return res.status(401).send({ result: false, message: "로그인이 필요합니다." });
 
     try {
         // 폴더 접근 권한 확인 (선택 사항)
@@ -44,13 +63,18 @@ export const createMemo = async (req, res) => {
 
         // 이미 해당 folderId로 작성된 메모가 있는지 확인
         const existingMemo = await Memo.findOne({ folderId, userId });
-
+        // 메모 업데이트 및 생성
         if (existingMemo) {
             // 메모 업데이트
             existingMemo.memo = memo;
             existingMemo.folderName = folderName;
-            existingMemo.createdAt = new Date(Date.now() + 9 * 60 * 60 * 1000);
+            existingMemo.createdAt = new Date();
             await existingMemo.save();
+
+            // 폴더명 업데이트
+            await updateFolderName(folderId, folderName);
+            // 폴더 안 메모 여부
+            await updateExistMemo(folderId, memo);
 
             return res.status(200).send({ result: true, memo: existingMemo });
         } else {
@@ -60,8 +84,12 @@ export const createMemo = async (req, res) => {
                 folderName,
                 memo,
                 userId,
-                createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000),
+                createdAt: new Date(),
             });
+            // 폴더명 업데이트
+            await updateFolderName(folderId, folderName);
+            // 폴더 안 메모 여부
+            await updateExistMemo(folderId, memo);
 
             return res.status(201).send({ result: true, memo: newMemo });
         }

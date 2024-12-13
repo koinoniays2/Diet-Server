@@ -40,7 +40,7 @@ export const createFolder = async (req, res) => {
         const data = await Folder.create({
             folderName,
             userId,
-            createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000)
+            createdAt: new Date()
         });
 
         return res.status(201).send({ result: true, message: "폴더가 생성되었습니다." });
