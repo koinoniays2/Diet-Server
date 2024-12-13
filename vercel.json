@@ -1,5 +1,4 @@
 {
-    "name" : "diet_server",
     "version": 2,
     "builds": [
         {

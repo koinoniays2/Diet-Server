@@ -11,7 +11,7 @@ import folderRouter from "./router/folderRouter.js";
 import { authMiddleware } from "./middleware/authMiddleware.js";
 
 const corsOption = {
-    origin: ["http://localhost:3000", "https://diet-bay.vercel.app"], // credentials: "include" 옵션을 사용할 때는 *가 아닌 정확한 도메인으로 설정
+    origin: ["http://localhost:3000", "https://folder-memo.vercel.app"], // credentials: "include" 옵션을 사용할 때는 *가 아닌 정확한 도메인으로 설정
     credentials: true // 쿠키 허용
 };
 const app = express();
