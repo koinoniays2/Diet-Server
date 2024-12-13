@@ -19,7 +19,7 @@ export const getMemo = async (req, res) => {
         // 폴더 ID와 사용자 ID로 메모 찾기
         const memos = await Memo.find({ folderId, userId });
 
-        return res.status(200).json({ result: true, data: memos });
+        return res.status(200).json({ result: true, memo: memos });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ result: false, message: "서버 에러가 발생했습니다." });
@@ -41,18 +41,32 @@ export const createMemo = async (req, res) => {
         if (!folder) {
             return res.status(403).send({ result: false, message: "이 폴더에 접근할 권한이 없습니다." });
         }
-        const newMemo = await Memo.create({
-            folderId,
-            folderName,
-            memo,
-            userId,
-            createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000)
-        });
-        return res.status(201).send({ result: true, memo: newMemo });
+
+        // 이미 해당 folderId로 작성된 메모가 있는지 확인
+        const existingMemo = await Memo.findOne({ folderId, userId });
+
+        if (existingMemo) {
+            // 메모 업데이트
+            existingMemo.memo = memo;
+            existingMemo.folderName = folderName;
+            existingMemo.createdAt = new Date(Date.now() + 9 * 60 * 60 * 1000);
+            await existingMemo.save();
+
+            return res.status(200).send({ result: true, memo: existingMemo });
+        } else {
+            // 새 메모 생성
+            const newMemo = await Memo.create({
+                folderId,
+                folderName,
+                memo,
+                userId,
+                createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000),
+            });
+
+            return res.status(201).send({ result: true, memo: newMemo });
+        }
     } catch (error) {
         console.error(error);
         return res.status(500).send({ result: false, message: "서버 에러가 발생했습니다." });
     }
 };
-export const deleteMemo = async (req, res) => res.status(200).json({ result: true, message: "deleteMemo" });
-export const updateMemo = async (req, res) => res.status(200).json({ result: true, message: "updateMemo" });
