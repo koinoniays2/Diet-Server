@@ -49,5 +49,19 @@ export const createFolder = async (req, res) => {
         return res.status(500).send({ result: false, message: "죄송합니다. 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요." });
     }
 };
-export const deleteFolder = (req, res) => res.status(200).json({ result: true, message: "deleteFolder" });
-export const UpdateFolder = (req, res) => res.status(200).json({ result: true, message: "UpdateFolder" });
+
+export const deleteFolder = async (req, res) => {
+    const { folderId } = req.body;
+
+    if (!folderId || folderId.length === 0) {
+        return res.status(400).json({ result: false, message: "삭제할 폴더를 선택해 주세요." });
+    }
+
+    try {
+        await Folder.deleteMany({ _id: { $in: folderId } });
+        return res.status(200).json({ result: true, message: "폴더가 삭제되었습니다." });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ result: false, message: "죄송합니다. 서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요." });
+    }
+};
