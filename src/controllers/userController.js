@@ -12,7 +12,7 @@ export const loginStatus = async (req, res) => {
             3. 세션 ID를 기준으로 저장소(store)에서 매핑 된 데이터를 찾아 req.session 객체로 로드
             -> 다른 사용자의 정보는 노출되지 않는다.(세션 ID는 각 사용자를 고유하게 식별)
             요청 동안 req.session.user를 통해 서버에서 사용자 정보 사용 가능
-            서버가 응답(res.json)을 반환하면 요청 처리가 끝나고, req.session 객체는 제거됨.
+            서버가 응답(res.json)을 반환하면 요청 처리가 끝나고, req.session 객체는 제거됨(세션 데이터 자체는 저장소(store)에 유지).
             */
             res.status(200).json({ result: true, user: req.session.user });
         }else {
@@ -80,13 +80,13 @@ export const login = async (req, res) => {
         };
         // 로그인 성공
         if (isMatch) {
-            /* 2. save() : 세션이 저장소(store)에 데이터를 저장 하고 브라우저에 쿠키를 전달
-            (express-session 미들웨어가 자동으로 Set-Cookie 헤더를 생성해 응답에 포함) 
+            /* 2. save() : 세션 데이터를 저장소(store)에 저장하고
+            express-session 미들웨어가 세션 ID를 Set-Cookie 헤더에 포함시켜 응답
             브라우저는 이 Set-Cookie 헤더를 받아 쿠키에 세션 ID를 저장
-            3. 로그인 요청 말고 다른 요청 시 (클라이언트가 쿠키 포함 요청 credentials: "include"로 설정 된) 
+            3. 이후 로그인 요청이 아닌 다른 요청 시 (클라이언트가 쿠키를 포함한 요청 credentials: "include"로 설정 된) 
             저장소(store)에서 세션 ID와 매핑 된 데이터를 검색 후 req.session 객체로 로드*/
             req.session.save(() => {
-                req.session.user = { // 1. 서버 메모리에서 임시로 세션 객체 내에 데이터 저장(데이터를 식별하기 위한 이름 : user)
+                req.session.user = { // 1. req.session 임시 객체에 데이터 추가(서버의 메모리 또는 설정된 저장소에서 관리될 데이터를 준비, 데이터를 식별하기 위한 이름 : user)
                     name: user.name,
                     email: user.email,
                     id: user._id

@@ -37,11 +37,16 @@ app.use((req, res, next) => {
 */
 
 // 세션 설정 정의
-app.use(session({
+app.use(session({ 
+    /* saveUninitialized: false 일 경우
+    클라이언트가 서버에 처음으로 세션 데이터를 저장하는 요청을 보냈을 때
+    express-session 미들웨어가 자동으로 세션을 생성
+    세션이 생성되면 express-session은 고유한 세션 ID를 생성하고
+    Set-Cookie 헤더를 생성해 응답에 포함하여 클라이언트의 쿠키에 저장 */
     name: "SessionID", // 세션 쿠키 이름
     secret: "secret", // 세션 데이터를 암호화하고 서명하기 위한 비밀 키
     resave: false, // true면 세션 데이터가 변경되지 않아도 클라이언트의 요청이 있을 때마다 저장소에 세션 데이터를 덮어씀
-    saveUninitialized: false, // 초기화되지 않은 세션을 저장소에 저장하지 않도록 설정(로그인한 사용자에 대해서만 세션이 생성)
+    saveUninitialized: false, // 로그인한 사용자에 대해서만 세션 생성(필요하지 않은 세션 생성을 방지)
     cookie: { // 세션 쿠키의 속성을 설정(세션 쿠키는 세션 ID를 클라이언트에 저장해 서버가 세션을 인식하게 해주는 매개체 역할)
         maxAge: 1000 * 60 * 60 * 24, // 쿠키 만료 시간
         httpOnly: true, // 클라이언트 측(JavaScript)에서 쿠키에 접근하지 못하도록 설정
@@ -52,7 +57,8 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.DB_URL + "/diet",
     }) /* 별도 저장소(store)를 설정하지 않으면, 세션 데이터는 메모리(RAM) 저장소가 기본값(서버가 실행 중일때만 유지)
-    서버가 꺼지거나 여러 서버를 사용할 때도 세션 데이터를 잃지 않고 공유하기 위해 DB에 저장 */
+    서버가 재시작 되거나 메모리가 가득 차면 데이터가 사라질 수 있기 때문에 
+    여러 서버를 사용할 때도 세션 데이터를 잃지 않고 공유하기 위해 저장소(mongoDB)에 저장 */
 }));
 
 // 라우터
