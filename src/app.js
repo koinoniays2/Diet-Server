@@ -28,10 +28,10 @@ Express는 x-forwarded-proto, x-forwarded-* 헤더를 신뢰하고, 요청의 �
 trust proxy는 Express에게 "이 요청은 프록시 서버를 거쳐 왔다"고 알려주는 설정
 1은 1단계 프록시(1개의 중간 서버(프록시)): 클라이언트 → [Vercel 프록시] → Express 서버
 chrome://settings/cookies => 시크릿 모드에서 서드 파티 쿠키 차단 : 쿠키 사용 불가
-// 디버깅 로그 추가
+// 디버깅 로그
 app.use((req, res, next) => {
     console.log("Protocol:", req.protocol); // 요청의 프로토콜이 HTTP인지 HTTPS인지 확인
-    console.log("Secure cookies allowed:", req.secure); // 요청이 HTTPS로 들어왔는지 여부를 boolean으로 나타냅
+    console.log("Secure cookies allowed:", req.secure); // 요청이 HTTPS로 들어왔는지 여부를 boolean으로 나타냄
     next();
 });
 */
